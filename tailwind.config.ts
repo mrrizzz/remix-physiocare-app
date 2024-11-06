@@ -34,34 +34,44 @@ export default {
           foreground: "hsl(var(--popover-foreground))",
         },
         primary: {
-          DEFAULT: "hsl(var(--primary))",
+          DEFAULT: "hsl(215, 100%, 50%)", // Vivid blue
+          50: "hsl(215, 100%, 97%)",
+          100: "hsl(215, 100%, 95%)",
+          200: "hsl(215, 100%, 90%)",
+          300: "hsl(215, 100%, 80%)",
+          400: "hsl(215, 100%, 70%)",
+          500: "hsl(215, 100%, 50%)", // Same as DEFAULT
+          600: "hsl(215, 100%, 45%)",
+          700: "hsl(215, 100%, 40%)",
+          800: "hsl(215, 100%, 35%)",
+          900: "hsl(215, 100%, 30%)",
           foreground: "hsl(var(--primary-foreground))",
         },
         secondary: {
-          DEFAULT: "hsl(var(--secondary))",
-          foreground: "hsl(var(--secondary-foreground))",
+          DEFAULT: "hsl(215, 30%, 95%)", // Light blue-grey
+          foreground: "hsl(215, 30%, 20%)",
         },
         muted: {
-          DEFAULT: "hsl(var(--muted))",
-          foreground: "hsl(var(--muted-foreground))",
+          DEFAULT: "hsl(215, 20%, 95%)",
+          foreground: "hsl(215, 20%, 45%)",
         },
         accent: {
-          DEFAULT: "hsl(var(--accent))",
-          foreground: "hsl(var(--accent-foreground))",
+          DEFAULT: "hsl(195, 90%, 50%)", // Cyan accent
+          foreground: "hsl(195, 90%, 10%)",
         },
         destructive: {
-          DEFAULT: "hsl(var(--destructive))",
-          foreground: "hsl(var(--destructive-foreground))",
+          DEFAULT: "hsl(0, 100%, 45%)", // Red for destructive actions
+          foreground: "hsl(0, 0%, 100%)",
         },
-        border: "hsl(var(--border))",
-        input: "hsl(var(--input))",
-        ring: "hsl(var(--ring))",
+        border: "hsl(215, 20%, 85%)",
+        input: "hsl(215, 20%, 90%)",
+        ring: "hsl(215, 100%, 50%)",
         chart: {
-          "1": "hsl(var(--chart-1))",
-          "2": "hsl(var(--chart-2))",
-          "3": "hsl(var(--chart-3))",
-          "4": "hsl(var(--chart-4))",
-          "5": "hsl(var(--chart-5))",
+          "1": "hsl(215, 100%, 50%)", // Primary blue
+          "2": "hsl(195, 90%, 50%)", // Cyan
+          "3": "hsl(235, 90%, 60%)", // Indigo
+          "4": "hsl(180, 80%, 45%)", // Teal
+          "5": "hsl(205, 85%, 55%)", // Light blue
         },
       },
     },

@@ -1,0 +1,252 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Account {
+  id         Int       @id @default(autoincrement())
+  profile    Profile   @relation(fields: [profile_id], references: [id])
+  profile_id Int       @unique
+  username   String    @unique @db.VarChar(50)
+  email      String    @unique @db.VarChar(100)
+  password   String    @db.VarChar(255)
+  role       Role
+  created_at DateTime  @default(now())
+  updated_at DateTime? @updatedAt
+}
+
+enum Role {
+  STAFF
+  PATIENT
+}
+
+model Profile {
+  id             Int             @id @default(autoincrement())
+  name           String          @db.VarChar(100)
+  dob            DateTime?       @db.Date
+  age            Int?
+  gender         String?         @db.VarChar(10)
+  address        String?
+  phone          String?         @db.VarChar(50)
+  created_at     DateTime        @default(now())
+  updated_at     DateTime?       @updatedAt
+  account        Account?
+  staff_profile  Staff? // Changed to optional one-to-one
+  appointments   Scheduling[]    @relation("PatientAppointments")
+  medical_record MedicalRecord[]
+}
+
+enum StaffType {
+  ADMIN
+  DOCTOR
+  OFFICER
+}
+
+model Position {
+  id         Int     @id @default(autoincrement())
+  name       String  @unique // Added unique constraint
+  max_salary Int
+  min_salary Int
+  staff      Staff[]
+}
+
+model Staff {
+  id            Int             @id @default(autoincrement())
+  profile       Profile         @relation(fields: [profile_id], references: [id])
+  profile_id    Int             @unique // Added unique constraint for one-to-one
+  position      Position        @relation(fields: [position_id], references: [id])
+  position_id   Int
+  type          StaffType       @default(DOCTOR)
+  salary        Int             @default(0)
+  join_date     DateTime        @db.Date
+  active        Boolean         @default(true)
+  created_at    DateTime        @default(now())
+  updated_at    DateTime?       @updatedAt
+  specialties   StaffService[]
+  appointments  Scheduling[]    @relation("StaffAppointments")
+  work_schedule StaffSchedule[]
+}
+
+model StaffSchedule {
+  id         Int               @id @default(autoincrement())
+  staff      Staff             @relation(fields: [staff_id], references: [id])
+  staff_id   Int
+  day        Day
+  sessions   Session[]
+  capacities SessionCapacity[]
+  is_active  Boolean           @default(true)
+  created_at DateTime          @default(now())
+  updated_at DateTime?         @updatedAt
+
+  @@unique([staff_id, day])
+}
+
+model SessionCapacity {
+  id           Int           @id @default(autoincrement())
+  schedule     StaffSchedule @relation(fields: [schedule_id], references: [id])
+  schedule_id  Int // Renamed from staff_schedule_id
+  session      Session // MORNING, AFTERNOON, or EVENING
+  max_patients Int           @default(5) // Renamed from capacity for clarity
+  created_at   DateTime      @default(now())
+  updated_at   DateTime?     @updatedAt
+
+  @@unique([schedule_id, session])
+}
+
+model Service {
+  id            Int            @id @default(autoincrement())
+  name          String         @unique // Added unique constraint
+  price         Int
+  staff_service StaffService[]
+  scheduling    Scheduling[]
+}
+
+model StaffService {
+  id         Int       @id @default(autoincrement()) // Added id field
+  staff      Staff     @relation(fields: [staff_id], references: [id])
+  staff_id   Int
+  service    Service   @relation(fields: [service_id], references: [id])
+  service_id Int
+  start_date DateTime  @db.Date
+  end_date   DateTime? @db.Date
+  active     Boolean   @default(true) // Added active status
+
+  @@unique([staff_id, service_id, start_date])
+}
+
+model Scheduling {
+  id             Int              @id @default(autoincrement())
+  staff          Staff            @relation("StaffAppointments", fields: [staff_id], references: [id])
+  staff_id       Int
+  patient        Profile          @relation("PatientAppointments", fields: [patient_id], references: [id])
+  patient_id     Int
+  service        Service          @relation(fields: [service_id], references: [id])
+  service_id     Int
+  payment        Payment          @relation(fields: [payment_id], references: [id])
+  payment_id     Int
+  date           DateTime         @db.Date
+  session        Session
+  status         SchedulingStatus
+  created_at     DateTime         @default(now())
+  updated_at     DateTime?        @updatedAt
+  medical_record MedicalRecord[]
+  service_note   ServiceNote[]
+
+  @@unique([staff_id, date, session])
+}
+
+enum Session {
+  MORNING
+  AFTERNOON
+  EVENING
+}
+
+enum SchedulingStatus {
+  WAITING
+  SCHEDULED
+  COMPLETED
+  CANCELLED
+}
+
+model MedicalRecord {
+  id                   Int           @id @default(autoincrement())
+  scheduling           Scheduling    @relation(fields: [scheduling_id], references: [id])
+  scheduling_id        Int
+  patient              Profile       @relation(fields: [patient_id], references: [id])
+  patient_id           Int
+  complaint            String?
+  medical_history      String?
+  physical_examination String?
+  systolic             Int?          @db.Integer
+  diastolic            Int?          @db.Integer
+  heart_rate           Int?          @db.Integer
+  respiratory_rate     Int?          @db.Integer
+  temperature          Decimal?      @db.Decimal(5, 2)
+  created_at           DateTime      @default(now())
+  updated_at           DateTime?     @updatedAt
+  service_note         ServiceNote[]
+}
+
+model ServiceNote {
+  id                Int            @id @default(autoincrement())
+  scheduling        Scheduling     @relation(fields: [scheduling_id], references: [id])
+  scheduling_id     Int
+  medical_record    MedicalRecord  @relation(fields: [medical_record_id], references: [id])
+  medical_record_id Int
+  payment           Payment        @relation(fields: [payment_id], references: [id])
+  payment_id        Int
+  additional_notes  String?
+  created_at        DateTime       @default(now())
+  updated_at        DateTime?      @updatedAt
+  prescription      Prescription[]
+}
+
+model Prescription {
+  id                  Int                  @id @default(autoincrement())
+  service_note        ServiceNote          @relation(fields: [service_note_id], references: [id])
+  service_note_id     Int
+  created_at          DateTime             @default(now())
+  updated_at          DateTime?            @updatedAt
+  prescription_detail PrescriptionDetail[]
+}
+
+model PrescriptionDetail {
+  id                   Int              @id @default(autoincrement())
+  prescription         Prescription     @relation(fields: [prescription_id], references: [id])
+  prescription_id      Int
+  medical_inventory    MedicalInventory @relation(fields: [medical_inventory_id], references: [id])
+  medical_inventory_id Int
+  quantity             Int
+  dosage_instructions  String?
+  created_at           DateTime         @default(now())
+  updated_at           DateTime?        @updatedAt
+}
+
+model MedicalInventory {
+  id                  Int                  @id @default(autoincrement())
+  name                String               @db.VarChar(100)
+  description         String?
+  price               Decimal              @db.Decimal(12, 2)
+  stock               Int
+  type                InventoryType
+  created_at          DateTime             @default(now())
+  updated_at          DateTime?            @updatedAt
+  prescription_detail PrescriptionDetail[]
+}
+
+enum InventoryType {
+  MEDICINE
+  AID
+  OTHER
+}
+
+model Payment {
+  id               Int           @id @default(autoincrement())
+  amount           Decimal       @db.Decimal(12, 2)
+  status           PaymentStatus
+  payment_method   String?       @db.VarChar(50)
+  created_at       DateTime      @default(now())
+  updated_at       DateTime?     @updatedAt
+  scheduling_pay   Scheduling[]
+  service_note_pay ServiceNote[]
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  CANCELLED
+}
+
+enum Day {
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+  SUNDAY
+}

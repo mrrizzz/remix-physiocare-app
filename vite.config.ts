@@ -21,6 +21,4 @@ export default defineConfig({
     }),
     tsconfigPaths(),
   ],
-  tailwind: true,
-  postcss: true,
 });

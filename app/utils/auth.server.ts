@@ -1,4 +1,4 @@
-import { json, createCookieSessionStorage } from "@remix-run/node";
+import { json, createCookieSessionStorage, redirect } from "@remix-run/node";
 import db from "./db.server";
 import { getSession, commitSession } from "./session.server";
 import bcrypt from "bcryptjs";
@@ -93,5 +93,14 @@ export async function register({
 
     const { password: _, ...accountWithoutPassword } = account;
     return accountWithoutPassword;
+  });
+}
+
+export async function logout(request: Request) {
+  const session = await getSession(request.headers.get("Cookie"));
+  return redirect("/login", {
+    headers: {
+      "Set-Cookie": await sessionStorage.destroySession(session),
+    },
   });
 }

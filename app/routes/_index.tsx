@@ -1,5 +1,5 @@
 import type { MetaFunction } from "@remix-run/node";
-import { Link } from "@remix-run/react";
+import { Link, useNavigate } from "@remix-run/react";
 
 export const meta: MetaFunction = () => {
   return [
@@ -16,7 +16,14 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
-import { Calendar, Clock, Activity, Users, ArrowRight } from "lucide-react";
+import {
+  Calendar,
+  Clock,
+  Activity,
+  Users,
+  ArrowRight,
+  Heart,
+} from "lucide-react";
 
 export default function LandingPage() {
   const features = [
@@ -41,9 +48,32 @@ export default function LandingPage() {
       icon: <Clock className="h-8 w-8 text-blue-500" />,
     },
   ];
+  const navigate = useNavigate();
 
+  const handleLogin = () => {
+    navigate("/login");
+  };
   return (
     <div className="min-h-screen bg-gray-50">
+      <section className="bg-gradient-to-r from-blue-600 to-blue-400 text-white">
+        <div className="max-w-6xl mx-auto py-4 px-4 md:px-6 lg:px-8">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <Heart className="h-8 w-8 text-white animate-pulse" />
+              <span className="text-2xl font-bold tracking-tight">
+                PHYSIOCARE
+              </span>
+            </div>
+            <Button
+              variant="ghost"
+              className="text-white hover:bg-blue-500"
+              onClick={handleLogin}
+            >
+              Sign In
+            </Button>
+          </div>
+        </div>
+      </section>
       {/* Hero Section */}
       <section className="py-20 px-4 md:px-6 lg:px-8 bg-white">
         <div className="max-w-6xl mx-auto text-center">
@@ -55,7 +85,11 @@ export default function LandingPage() {
             appointments, track progress, and recover faster.
           </p>
           <div className="flex gap-4 justify-center">
-            <Button size="lg" className="bg-blue-600 hover:bg-blue-700">
+            <Button
+              size="lg"
+              onClick={handleLogin}
+              className="bg-blue-600 hover:bg-blue-700"
+            >
               Book Now <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
             <Button size="lg" variant="outline">
@@ -64,7 +98,6 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
-
       {/* Features Section */}
       <section className="py-20 px-4 md:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
@@ -88,7 +121,6 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
-
       {/* CTA Section */}
       <section className="py-20 px-4 md:px-6 lg:px-8 bg-blue-50">
         <div className="max-w-4xl mx-auto text-center">
@@ -99,7 +131,11 @@ export default function LandingPage() {
             Join thousands of satisfied patients who have improved their quality
             of life through our platform.
           </p>
-          <Button size="lg" className="bg-blue-600 hover:bg-blue-700">
+          <Button
+            size="lg"
+            onClick={handleLogin}
+            className="bg-blue-600 hover:bg-blue-700"
+          >
             Get Started Now
           </Button>
         </div>

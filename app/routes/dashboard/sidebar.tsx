@@ -13,9 +13,9 @@ import {
   SidebarRail,
 } from "~/components/ui/sidebar";
 import { Skeleton } from "~/components/ui/skeleton";
-import LogoutButton from "~/routes/logout/LogoutButton";
 import { useAuth } from "./useAuth";
 import { Link, useLocation } from "@remix-run/react";
+import LogoutButton from "../_auth.logout/LogoutButton";
 
 const menuUserItems = [
   { icon: Home, label: "Home", href: "/dashboard" },
@@ -32,6 +32,7 @@ const menuStaffItems = [
 
 export default function SidebarComponent() {
   const { user } = useAuth();
+  console.log("inii yang disidebar : ", user);
   const menuItems = user?.role === "STAFF" ? menuStaffItems : menuUserItems;
   const location = useLocation();
   const pathname = location.pathname;
@@ -46,7 +47,7 @@ export default function SidebarComponent() {
                 <>
                   <Avatar>
                     <AvatarImage
-                      src={user?.avatar || "/avatar.png"}
+                      // src={user?.avatar || "/avatar.png"}
                       alt={user?.username || "User"}
                     />
                     <AvatarFallback>
@@ -62,7 +63,6 @@ export default function SidebarComponent() {
                     </span>
                   </div>
                 </>
-                )
               </div>
             </SidebarMenuButton>
           </SidebarMenuItem>

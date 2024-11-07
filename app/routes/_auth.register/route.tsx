@@ -1,5 +1,4 @@
-// app/routes/auth.register.tsx
-import { Link, useOutletContext } from "@remix-run/react";
+import { useOutletContext } from "@remix-run/react";
 import { ActionFunctionArgs, json, redirect } from "@remix-run/node";
 import { login, register } from "~/utils/auth.server";
 import { SignUpSchema } from "~/schema/auth";
@@ -11,11 +10,9 @@ export default function RegisterPage() {
   }>();
 
   return (
-    <>
-      <CardWrapper>
-        <RegisterForm />
-      </CardWrapper>
-    </>
+    <CardWrapper>
+      <RegisterForm />
+    </CardWrapper>
   );
 }
 
@@ -33,7 +30,6 @@ export const action = async ({
   request,
 }: ActionFunctionArgs): Promise<ActionData | Response> => {
   const formData = await request.formData();
-  console.log(formData);
   try {
     const result = SignUpSchema.safeParse({
       username: formData.get("username"),

@@ -1,8 +1,10 @@
 export interface UserData {
-  id?: string;
-  email?: string;
-  username?: string;
-  role?: string;
+  id: number;
+  email: string;
+  role: string;
+  username: string;
+  iat: number;
+  exp: number;
 }
 export type LoaderData = {
   token: string;

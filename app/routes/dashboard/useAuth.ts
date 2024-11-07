@@ -5,7 +5,8 @@ interface LoaderData {
   user: UserData;
 }
 export function useAuth() {
-  const data = useRouteLoaderData("dashboard") as LoaderData;
+  const data = useRouteLoaderData("routes/dashboard") as LoaderData;
+  console.log("ini dari use auth: ", data);
   return {
     user: data?.user,
     isAuthenticated: !!data?.user,
